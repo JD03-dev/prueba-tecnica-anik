@@ -1,17 +1,21 @@
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import ProductList from "./components/ProductList"
 import SearchBar from "./components/SearchBar"
 import SortSelect from "./components/SortSelect"
 import ProductForm from "./components/ProductForm"
 
 function App() {
-  const [products, setProducts] = useState([
-    { id: 1, name: "Shampoo", price: 1200 },
-    { id: 2, name: "Base", price: 25 },
-    { id: 3, name: "Agua", price: 80 },
-  ])
+  const [products, setProducts] = useState([])
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState("asc")
+
+  // Cargar productos desde backend
+  useEffect(() => {
+    fetch("http://localhost:3000/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error("Error cargando productos:", err));
+  }, []);
 
   const filteredProducts = useMemo(() => {
     return products
