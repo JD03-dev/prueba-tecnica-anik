@@ -14,8 +14,8 @@ function App() {
     fetch("http://localhost:3000/products")
       .then((res) => res.json())
       .then((data) => setProducts(data))
-      .catch((err) => console.error("Error cargando productos:", err));
-  }, []);
+      .catch((err) => console.error("Error cargando productos:", err))
+  }, [])
 
   const filteredProducts = useMemo(() => {
     return products
@@ -27,8 +27,27 @@ function App() {
       )
   }, [products, search, sort])
 
+  // Agregar productos al backend
   const addProduct = (newProduct) => {
-    setProducts([...products, { id: products.length + 1, ...newProduct }])
+    fetch("http://localhost:3000/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newProduct),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json()
+          alert("Error: " + errorData.error) // Mostrar error del backend
+          return null
+        }
+        return res.json()
+      })
+      .then((saved) => {
+        if (saved) {
+          setProducts([...products, saved])
+        }
+      })
+      .catch((err) => console.error("Error agregando producto:", err))
   }
 
   return (

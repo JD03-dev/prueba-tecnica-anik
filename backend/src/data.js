@@ -5,5 +5,5 @@ let products = [
     { id: 3, name: "Mango", price: 2300 }
   ]
   
-  module.exports = products;
+  module.exports = products
   
