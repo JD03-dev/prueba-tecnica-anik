@@ -1,5 +1,7 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import ProductList from "./components/ProductList"
+import SearchBar from "./components/SearchBar"
+import SortSelect from "./components/SortSelect"
 import ProductForm from "./components/ProductForm"
 
 function App() {
@@ -8,6 +10,18 @@ function App() {
     { id: 2, name: "Base", price: 25 },
     { id: 3, name: "Agua", price: 80 },
   ])
+  const [search, setSearch] = useState("")
+  const [sort, setSort] = useState("asc")
+
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter((p) =>
+        p.name.toLowerCase().includes(search.toLowerCase())
+      )
+      .sort((a, b) =>
+        sort === "asc" ? a.price - b.price : b.price - a.price
+      )
+  }, [products, search, sort])
 
   const addProduct = (newProduct) => {
     setProducts([...products, { id: products.length + 1, ...newProduct }])
@@ -27,8 +41,13 @@ function App() {
       <div className="section">
         <h2>Lista de Productos</h2>
 
+        <div className="controls">
+          <SearchBar search={search} setSearch={setSearch} />
+          <SortSelect sort={sort} setSort={setSort} />
+        </div>
+
         <ProductList
-          products={products}
+          products={filteredProducts}
         />
       </div>
     </div>
@@ -36,4 +55,3 @@ function App() {
 }
 
 export default App
-
